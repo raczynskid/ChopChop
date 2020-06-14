@@ -140,15 +140,15 @@ class ContextMenu:
 
     def add_buttons(self):
         clipboard = HoverButton(self.root, text="clipboard", command=self.to_clipboard)
-        mail = HoverButton(self.root, text="email", command=lambda: print("mail pressed"))
-        teams = HoverButton(self.root, text="teams", command=lambda: print("teams pressed"))
-        upload = HoverButton(self.root, text="upload", command=lambda: print("upload pressed"))
+        mail = HoverButton(self.root, text="email", command=lambda: print("mail pressed"), state=tkinter.DISABLED)
+        teams = HoverButton(self.root, text="teams", command=lambda: print("teams pressed"), state=tkinter.DISABLED)
+        upload = HoverButton(self.root, text="upload", command=lambda: print("upload pressed"), state=tkinter.DISABLED)
         save_as = HoverButton(self.root, text="save as...", command=self.save_as)
         clipboard.grid(column=0, row=0, sticky="NSEW")
-        mail.grid(column=0, row=1, sticky="NSEW")
-        teams.grid(column=0, row=2, sticky="NSEW")
-        upload.grid(column=0, row=3, sticky="NSEW")
-        save_as.grid(column=0, row=4, sticky="NSEW")
+        save_as.grid(column=0, row=1, sticky="NSEW")
+        mail.grid(column=0, row=2, sticky="NSEW")
+        teams.grid(column=0, row=3, sticky="NSEW")
+        upload.grid(column=0, row=4, sticky="NSEW")
 
     @cleanup
     def to_clipboard(self):
@@ -177,8 +177,11 @@ class HoverButton(tkinter.Button):
     def __init__(self, master, **kw):
         tkinter.Button.__init__(self, master=master, **kw)
         self.defaultBackground = self["background"]
-        self.bind("<Enter>", self.on_enter)
-        self.bind("<Leave>", self.on_leave)
+        if self['state'] == tkinter.DISABLED:
+            self['background'] = 'gray'
+        else:
+            self.bind("<Enter>", self.on_enter)
+            self.bind("<Leave>", self.on_leave)
 
     def on_enter(self, e):
         self['background'] = 'tan1'
