@@ -2,6 +2,7 @@ import tkinter
 from PIL import Image, ImageTk
 from utils.shot import Shot
 from utils.clipboard_handle import ClipboardHandle
+from tkinter import filedialog
 
 
 class App:
@@ -24,20 +25,28 @@ class App:
     def configure_root(self):
         """configure fullscreen root"""
         root = tkinter.Tk()
+
+        # general root settings
         root.overrideredirect(1)
         w = root.winfo_screenwidth()
         h = root.winfo_screenheight()
         root.geometry(f"{w}x{h}+0+0")
         root.focus_set()
+
+        # set events
         root.bind("<Escape>", self.clear)
         return root
 
     def configure_canvas(self):
         """configure new canvas"""
+
+        # general canvas settings
         canvas = tkinter.Canvas(self.root, width=self.w, height=self.h)
         canvas.pack()
         canvas.configure(cursor='cross')
         canvas.configure(background='black')
+
+        # set events
         canvas.bind("<ButtonPress-1>", self.on_button_press)
         canvas.bind("<B1-Motion>", self.on_move_press)
         canvas.bind("<ButtonRelease-1>", self.on_button_release)
@@ -83,6 +92,8 @@ class App:
         """display context menu after cropping the screenshot"""
         cw = ContextMenu(coords, self.shot)
         cw.show()
+
+        # if context menu is closed, destroy app
         self.clear()
 
     def clear(self):
@@ -91,8 +102,6 @@ class App:
         self.root.quit()
         self.root.destroy()
 
-
-#
 
 class ContextMenu:
     """display context menu for currently selected screenshot"""
@@ -117,20 +126,33 @@ class ContextMenu:
         mail = HoverButton(self.root, text="email", command=lambda: print("mail pressed"))
         teams = HoverButton(self.root, text="teams", command=lambda: print("teams pressed"))
         upload = HoverButton(self.root, text="upload", command=lambda: print("upload pressed"))
+        save_as = HoverButton(self.root, text="save as...", command=self.save_as)
         clipboard.grid(column=0, row=0, sticky="NSEW")
         mail.grid(column=0, row=1, sticky="NSEW")
         teams.grid(column=0, row=2, sticky="NSEW")
         upload.grid(column=0, row=3, sticky="NSEW")
+        save_as.grid(column=0, row=4, sticky="NSEW")
 
     def to_clipboard(self):
         myimg = ClipboardHandle.convert_image(self.shot)
         ClipboardHandle.image_to_clipboard(myimg)
         self.clear()
 
+    def save_as(self):
+        directory = filedialog.asksaveasfilename(initialdir="/<file_name>",
+                                                 title="Save as...",
+                                                 filetypes=(("png files", "*.png"),
+                                                            ("jpeg files", "*.jpg"),
+                                                            ("all files", "*.*")),
+                                                 defaultextension='')
+        self.shot.save_as(directory)
+        self.clear()
+
     def show(self):
         self.root.mainloop()
 
     def clear(self):
+        """destroy and quit context menu"""
         self.root.withdraw()
         self.root.quit()
         self.root.destroy()
