@@ -50,7 +50,7 @@ class App:
         root.focus_set()
 
         # set events
-        root.bind("<Escape>", lambda e: cleanup(e))
+        root.bind("<Escape>", lambda e: (e.widget.withdraw(), e.widget.quit()))
         return root
 
     def configure_canvas(self):
@@ -80,7 +80,6 @@ class App:
         """call event on left mouse button press"""
 
         # save mouse drag start position
-
         self.shot = copy.deepcopy(self.original_shot)
         self.start_x = self.canvas.canvasx(event.x)
         self.start_y = self.canvas.canvasy(event.y)
@@ -125,6 +124,8 @@ class ContextMenu:
         self.action = False
 
     def configure_root(self):
+
+        # create the root
         root = tkinter.Toplevel()
         root.overrideredirect(1)
 
@@ -134,36 +135,72 @@ class ContextMenu:
             screen_offset_x, screen_offset_y = -100, -300
         root.geometry(f"+{int(self.x) + screen_offset_x}+{int(self.y) + screen_offset_y}")
         root.columnconfigure(0, weight=1)
-        root.bind("<Escape>", lambda e: (e.widget.withdraw(), e.widget.quit()))
+
+        # bind events
+        root.bind("<Escape>", lambda e: (e.widget.quit()))
         root.focus_set()
         return root
 
     def add_buttons(self):
+        # create and configure context menu buttons
         clipboard = HoverButton(self.root, text="clipboard", command=self.to_clipboard)
         mail = HoverButton(self.root, text="email", command=lambda: print("mail pressed"), state=tkinter.DISABLED)
         teams = HoverButton(self.root, text="teams", command=lambda: print("teams pressed"), state=tkinter.DISABLED)
         upload = HoverButton(self.root, text="upload", command=lambda: print("upload pressed"), state=tkinter.DISABLED)
-        save_as = HoverButton(self.root, text="save as...", command=self.save_as)
+        save = HoverButton(self.root, text="save", command=self.save_input)
+
+        # grid the buttons
         clipboard.grid(column=0, row=0, sticky="NSEW")
-        save_as.grid(column=0, row=1, sticky="NSEW")
-        mail.grid(column=0, row=2, sticky="NSEW")
-        teams.grid(column=0, row=3, sticky="NSEW")
-        upload.grid(column=0, row=4, sticky="NSEW")
+        save.grid(column=0, row=1, sticky="NSEW")
+        mail.grid(column=0, row=3, sticky="NSEW")
+        teams.grid(column=0, row=4, sticky="NSEW")
+        upload.grid(column=0, row=5, sticky="NSEW")
 
     @cleanup
     def to_clipboard(self):
+        """copy image to clipboard"""
         myimg = ClipboardHandle.convert_image(self.shot)
         ClipboardHandle.image_to_clipboard(myimg)
 
     @cleanup
     def save_as(self):
+        """open save as filedialog and choose save directory"""
         directory = filedialog.asksaveasfilename(initialdir="/<file_name>",
                                                  title="Save as...",
                                                  filetypes=(("png files", "*.png"),
                                                             ("jpeg files", "*.jpg"),
                                                             ("all files", "*.*")),
                                                  defaultextension='')
-        self.shot.save_as(directory)
+        if directory != "":
+            self.shot.save_as(directory)
+
+    @cleanup
+    def save(self, filename):
+        """save in default directory but with custom name"""
+        self.shot.filename = filename + '.png'
+        self.shot.save()
+
+    def save_input(self):
+        """
+        show additional options when save button is clicked
+        meant to concatenate quick save and save as into less space
+        """
+        # create a frame
+        frame = tkinter.Frame(self.root)
+        # inside the frame:
+        # create a text field
+        txt_field = tkinter.Entry(frame)
+        # create ok button to confirm
+        ok_btn = HoverButton(frame, text='save', command=lambda: self.save(txt_field.get()))
+        # create browse button to open file explorer
+        browse_btn = HoverButton(frame, text='...', command=self.save_as)
+        # grid the objects into the frame
+        txt_field.grid(column=0, row=1, columnspan=2, sticky="W")
+        ok_btn.grid(column=2, row=1, sticky="W")
+        browse_btn.grid(column=3, row=1, sticky="W")
+        # replace save button in context menu with filled frame
+        frame.grid(column=0, row=1)
+
 
     def show(self):
         self.root.mainloop()
@@ -174,14 +211,12 @@ class ContextMenu:
 
 
 class HoverButton(tkinter.Button):
+    """Button class with changing colors on hover"""
     def __init__(self, master, **kw):
         tkinter.Button.__init__(self, master=master, **kw)
         self.defaultBackground = self["background"]
-        if self['state'] == tkinter.DISABLED:
-            self['background'] = 'gray'
-        else:
-            self.bind("<Enter>", self.on_enter)
-            self.bind("<Leave>", self.on_leave)
+        self.bind("<Enter>", self.on_enter)
+        self.bind("<Leave>", self.on_leave)
 
     def on_enter(self, e):
         self['background'] = 'tan1'
