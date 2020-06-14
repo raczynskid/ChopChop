@@ -1,6 +1,7 @@
 import tkinter
 from PIL import Image, ImageTk
 from utils.shot import Shot
+from utils.clipboard_handle import ClipboardHandle
 
 
 class App:
@@ -11,6 +12,7 @@ class App:
     on release create toplevel menu with options
     after option is selected destroy window
     """
+
     def __init__(self):
         self.root = self.configure_root()
         self.w = self.root.winfo_screenwidth()
@@ -27,7 +29,7 @@ class App:
         h = root.winfo_screenheight()
         root.geometry(f"{w}x{h}+0+0")
         root.focus_set()
-        root.bind("<Escape>", lambda e: (e.widget.withdraw(), e.widget.quit()))
+        root.bind("<Escape>", self.clear)
         return root
 
     def configure_canvas(self):
@@ -78,20 +80,28 @@ class App:
         self.show_action_menu(capture_coordinates[2:])
 
     def show_action_menu(self, coords):
-        cw = ContextMenu(coords)
+        """display context menu after cropping the screenshot"""
+        cw = ContextMenu(coords, self.shot)
         cw.show()
-        # destroy root window
-        # self.root.withdraw()
-        # self.root.quit()
-        # self.root.destroy()
+        self.clear()
 
+    def clear(self):
+        # destroy root window
+        self.root.withdraw()
+        self.root.quit()
+        self.root.destroy()
+
+
+#
 
 class ContextMenu:
     """display context menu for currently selected screenshot"""
-    def __init__(self, coords):
+
+    def __init__(self, coords, shot):
         self.x, self.y = coords
         self.root = self.configure_root()
         self.add_buttons()
+        self.shot = shot
 
     def configure_root(self):
         root = tkinter.Toplevel()
@@ -103,12 +113,38 @@ class ContextMenu:
         return root
 
     def add_buttons(self):
-        mail = tkinter.Button(self.root, text="Send by email")
-        teams = tkinter.Button(self.root, text="Send by Teams")
-        upload = tkinter.Button(self.root, text="Upload")
-        mail.grid(column=0, row=0, sticky="NSEW")
-        teams.grid(column=0, row=1, sticky="NSEW")
-        upload.grid(column=0, row=2, sticky="NSEW")
+        clipboard = HoverButton(self.root, text="clipboard", command=self.to_clipboard)
+        mail = HoverButton(self.root, text="email", command=lambda: print("mail pressed"))
+        teams = HoverButton(self.root, text="teams", command=lambda: print("teams pressed"))
+        upload = HoverButton(self.root, text="upload", command=lambda: print("upload pressed"))
+        clipboard.grid(column=0, row=0, sticky="NSEW")
+        mail.grid(column=0, row=1, sticky="NSEW")
+        teams.grid(column=0, row=2, sticky="NSEW")
+        upload.grid(column=0, row=3, sticky="NSEW")
+
+    def to_clipboard(self):
+        myimg = ClipboardHandle.convert_image(self.shot)
+        ClipboardHandle.image_to_clipboard(myimg)
+        self.clear()
 
     def show(self):
         self.root.mainloop()
+
+    def clear(self):
+        self.root.withdraw()
+        self.root.quit()
+        self.root.destroy()
+
+
+class HoverButton(tkinter.Button):
+    def __init__(self, master, **kw):
+        tkinter.Button.__init__(self, master=master, **kw)
+        self.defaultBackground = self["background"]
+        self.bind("<Enter>", self.on_enter)
+        self.bind("<Leave>", self.on_leave)
+
+    def on_enter(self, e):
+        self['background'] = 'tan1'
+
+    def on_leave(self, e):
+        self['background'] = self.defaultBackground
