@@ -1,8 +1,24 @@
 import tkinter
+import copy
 from PIL import Image, ImageTk
 from utils.shot import Shot
 from utils.clipboard_handle import ClipboardHandle
 from tkinter import filedialog
+
+
+def cleanup(f):
+    """cleanup decorator to destroy context menu after function call"""
+
+    def wrap(self, *args):
+        print("cleanup")
+        f(self, *args)
+        self.action = True
+        self.root.withdraw()
+        self.root.quit()
+        if isinstance(self.root, tkinter.Toplevel):
+            self.root.destroy()
+
+    return wrap
 
 
 class App:
@@ -21,6 +37,7 @@ class App:
         self.canvas = self.configure_canvas()
         self.rect = None
         self.shot = None
+        self.original_shot = None
 
     def configure_root(self):
         """configure fullscreen root"""
@@ -34,7 +51,7 @@ class App:
         root.focus_set()
 
         # set events
-        root.bind("<Escape>", self.clear)
+        root.bind("<Escape>", lambda e: cleanup(e))
         return root
 
     def configure_canvas(self):
@@ -54,16 +71,18 @@ class App:
 
     def crop_shot(self):
         """display pillow image in root"""
-        self.shot = Shot()
         self.original_shot = Shot()
+        self.shot = copy.deepcopy(self.original_shot)
         image = ImageTk.PhotoImage(self.shot.img)
         self.canvas.create_image(self.w / 2, self.h / 2, image=image)
         self.root.mainloop()
 
     def on_button_press(self, event):
         """call event on left mouse button press"""
+
         # save mouse drag start position
-        self.shot = self.original_shot
+
+        self.shot = copy.deepcopy(self.original_shot)
         self.start_x = self.canvas.canvasx(event.x)
         self.start_y = self.canvas.canvasy(event.y)
 
@@ -73,6 +92,7 @@ class App:
 
     def on_move_press(self, event):
         """call event on mouse drag"""
+
         # update current mouse position
         self.cur_x, self.cur_y = (event.x, event.y)
 
@@ -88,19 +108,11 @@ class App:
         self.shot.save()
         self.show_action_menu(capture_coordinates[2:])
 
+    @cleanup
     def show_action_menu(self, coords):
         """display context menu after cropping the screenshot"""
         cw = ContextMenu(coords, self.shot)
         cw.show()
-
-        # if context menu is closed, destroy app
-        self.clear()
-
-    def clear(self):
-        # destroy root window
-        self.root.withdraw()
-        self.root.quit()
-        self.root.destroy()
 
 
 class ContextMenu:
@@ -111,6 +123,7 @@ class ContextMenu:
         self.root = self.configure_root()
         self.add_buttons()
         self.shot = shot
+        self.action = False
 
     def configure_root(self):
         root = tkinter.Toplevel()
@@ -133,11 +146,12 @@ class ContextMenu:
         upload.grid(column=0, row=3, sticky="NSEW")
         save_as.grid(column=0, row=4, sticky="NSEW")
 
+    @cleanup
     def to_clipboard(self):
         myimg = ClipboardHandle.convert_image(self.shot)
         ClipboardHandle.image_to_clipboard(myimg)
-        self.clear()
 
+    @cleanup
     def save_as(self):
         directory = filedialog.asksaveasfilename(initialdir="/<file_name>",
                                                  title="Save as...",
@@ -146,14 +160,11 @@ class ContextMenu:
                                                             ("all files", "*.*")),
                                                  defaultextension='')
         self.shot.save_as(directory)
-        self.clear()
 
     def show(self):
         self.root.mainloop()
 
     def clear(self):
-        """destroy and quit context menu"""
-        self.root.withdraw()
         self.root.quit()
         self.root.destroy()
 
