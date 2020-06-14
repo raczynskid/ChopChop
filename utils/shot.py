@@ -10,7 +10,7 @@ user32.SetProcessDPIAware()
 class Shot:
     def __init__(self):
         self.img = None
-        self.path = "D:/Python/TempScreens"
+        self.path = "./TempScreens"
         self.filename = "tmp.png"
         self.prepdir()
         self.grab()
