@@ -68,6 +68,7 @@ class App:
         canvas.bind("<ButtonPress-1>", self.on_button_press)
         canvas.bind("<B1-Motion>", self.on_move_press)
         canvas.bind("<ButtonRelease-1>", self.on_button_release)
+        canvas.bind("<ButtonRelease-3>", self.open_folder)
         return canvas
 
     def crop_shot(self):
@@ -107,6 +108,10 @@ class App:
         self.shot.crop(capture_coordinates)
         self.shot.save()
         self.show_action_menu(capture_coordinates[2:])
+
+    @cleanup
+    def open_folder(self, event):
+        os.popen(f'explorer "{os.path.abspath(self.shot.path)}"')
 
     @cleanup
     def show_action_menu(self, coords):
@@ -150,6 +155,7 @@ class ContextMenu:
         teams = HoverButton(self.root, text="teams", command=lambda: print("teams pressed"), state=tkinter.DISABLED)
         upload = HoverButton(self.root, text="upload", command=lambda: print("upload pressed"), state=tkinter.DISABLED)
         save = HoverButton(self.root, text="save", command=self.save_input)
+        folder = HoverButton(self.root, text="folder", command=self.open_folder)
 
         # grid the buttons
         clipboard.grid(column=0, row=0, sticky="NSEW")
@@ -157,6 +163,7 @@ class ContextMenu:
         mail.grid(column=0, row=3, sticky="NSEW")
         teams.grid(column=0, row=4, sticky="NSEW")
         upload.grid(column=0, row=5, sticky="NSEW")
+        folder.grid(column=0, row=6, sticky="NSEW")
 
     @cleanup
     def to_clipboard(self):
@@ -188,6 +195,9 @@ class ContextMenu:
         self.shot.save()
         MailHandler.compose_mail(os.path.abspath("/".join([self.shot.path, self.shot.filename])))
 
+    @cleanup
+    def open_folder(self):
+        os.popen(f'explorer "{os.path.abspath(self.shot.path)}"')
 
     def save_input(self):
         """
@@ -209,6 +219,8 @@ class ContextMenu:
         browse_btn.grid(column=3, row=1, sticky="W")
         # replace save button in context menu with filled frame
         frame.grid(column=0, row=1)
+        # focus on entry text field
+        txt_field.focus()
 
 
     def show(self):
