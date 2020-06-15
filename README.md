@@ -21,6 +21,7 @@ snipping mode or with context menu open to see all your saved snips
 
 How to use ChopChop
 -
-TBA
+copy image to clipboard
 
 
+save image to file
