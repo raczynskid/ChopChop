@@ -22,6 +22,8 @@ snipping mode or with context menu open to see all your saved snips
 How to use ChopChop
 -
 copy image to clipboard
-
+![Clipboard demo](Examples/clipboard.gif)
 
 save image to file
+
+![file demo](Examples/to_file.gif)
