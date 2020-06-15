@@ -1,8 +1,10 @@
 import tkinter
 import copy
+import os
 from PIL import Image, ImageTk
 from utils.shot import Shot
 from utils.clipboard_handle import ClipboardHandle
+from utils.mail_handle import MailHandler
 from tkinter import filedialog
 
 
@@ -144,7 +146,7 @@ class ContextMenu:
     def add_buttons(self):
         # create and configure context menu buttons
         clipboard = HoverButton(self.root, text="clipboard", command=self.to_clipboard)
-        mail = HoverButton(self.root, text="email", command=lambda: print("mail pressed"), state=tkinter.DISABLED)
+        mail = HoverButton(self.root, text="email", command=self.send_mail)
         teams = HoverButton(self.root, text="teams", command=lambda: print("teams pressed"), state=tkinter.DISABLED)
         upload = HoverButton(self.root, text="upload", command=lambda: print("upload pressed"), state=tkinter.DISABLED)
         save = HoverButton(self.root, text="save", command=self.save_input)
@@ -179,6 +181,13 @@ class ContextMenu:
         """save in default directory but with custom name"""
         self.shot.filename = filename + '.png'
         self.shot.save()
+
+    @cleanup
+    def send_mail(self):
+        """send mail with screenshot embedded in html body"""
+        self.shot.save()
+        MailHandler.compose_mail(os.path.abspath("/".join([self.shot.path, self.shot.filename])))
+
 
     def save_input(self):
         """
