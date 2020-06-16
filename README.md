@@ -23,7 +23,31 @@ How to use ChopChop
 -
 copy image to clipboard
 ![Clipboard demo](Examples/clipboard.gif)
-
+ 
 save image to file
 
 ![file demo](Examples/to_file.gif)
+<br><br>
+
+
+- to see all your previously saved snips, 
+just press right mouse button anywhere on the screen
+or choose "folder" option from the context menu
+
+- pick the "email" option from context menu to create a new email
+with your snip in the body (requires email client, eg. Outlook)
+
+- MS Teams integration will be added in the future - currently the "teams" button is greyed out
+
+
+Installing ChopChop in 3 steps:
+-
+(make sure you have Python3 and git installed)
+- clone this repository to your computer with <br> 
+```git clone https://github.com/raczynskid/ChopChop.git```<br>
+- install the requirements with <br> 
+```pip install requirements txt```<br>
+- create a shortcut where target is <br>
+```[path to your pythonw (the "w" means no console window)][space][path to __main__.py]```
+example:
+![shortcut](Examples/shortcut.png)
