@@ -18,6 +18,7 @@ snip by using the contextual menu that appears after you select the area
 a bunch of screenshots in quick succession, no need to go through the browse window every time.
 - Pop open the default folder at any time - just right click anywhere in 
 snipping mode or with context menu open to see all your saved snips
+- Editing or drawing on your snips is not available right now, but will be implemented in future releases
 
 How to use ChopChop
 -
@@ -51,3 +52,9 @@ Installing ChopChop in 3 steps:
 ```[path to your pythonw (the "w" means no console window)][space][path to __main__.py]```
 example:
 ![shortcut](Examples/shortcut.png)
+
+Contributing to ChopChop
+-
+If you want to help improve ChopChop, feel free to fork this repository or log an issue/enhancement.
+Keep in mind the main goal is to keep the UI to an absolute minimum! Make sure your feature does not 
+add too many knobs, ticks or buttons!
