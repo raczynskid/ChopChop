@@ -138,8 +138,10 @@ class ContextMenu:
 
         # offset menu location to NW if too close to SE border
         screen_offset_x, screen_offset_y = 10, 10
-        if (abs(root.winfo_screenwidth() - self.x) < 100) or (abs(root.winfo_screenheight() - self.y) < 100):
-            screen_offset_x, screen_offset_y = -100, -300
+        if abs(root.winfo_screenwidth() - self.x) < 100:
+            screen_offset_x = -100
+        if abs(root.winfo_screenheight() - self.y) < 100:
+            screen_offset_y = -300
         root.geometry(f"+{int(self.x) + screen_offset_x}+{int(self.y) + screen_offset_y}")
         root.columnconfigure(0, weight=1)
 
