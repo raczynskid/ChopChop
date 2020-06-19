@@ -18,7 +18,7 @@ snip by using the contextual menu that appears after you select the area
 a bunch of screenshots in quick succession, no need to go through the browse window every time.
 - Pop open the default folder at any time - just right click anywhere in 
 snipping mode or with context menu open to see all your saved snips
-- Editing or drawing on your snips is not available right now, but will be implemented in future releases
+- If you want to edit your snip, just choose Edit option from the contxt menu - it will immediately open in MS Paint
 
 How to use ChopChop
 -
@@ -28,8 +28,12 @@ copy image to clipboard
 save image to file
 
 ![file demo](Examples/to_file.gif)
-<br><br>
 
+
+edit image in MS paint
+
+![edit demo](Examples/edit.gif)
+<br><br>
 
 - to see all your previously saved snips, 
 just press right mouse button anywhere on the screen
@@ -37,6 +41,8 @@ or choose "folder" option from the context menu
 
 - pick the "email" option from context menu to create a new email
 with your snip in the body (requires email client, eg. Outlook)
+
+- pick "edit" to open the current snip in MS paint to edit and copy/save
 
 - MS Teams integration will be added in the future - currently the "teams" button is greyed out
 
