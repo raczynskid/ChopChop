@@ -155,7 +155,7 @@ class ContextMenu:
         teams = HoverButton(self.root, text="teams", command=lambda: print("teams pressed"), state=tkinter.DISABLED)
         upload = HoverButton(self.root, text="upload", command=lambda: print("upload pressed"), state=tkinter.DISABLED)
         save = HoverButton(self.root, text="save", command=self.save_input)
-        folder = HoverButton(self.root, text="folder", command=self.open_folder)
+        folder = HoverButton(self.root, text="edit", command=self.edit)
 
         # grid the buttons
         clipboard.grid(column=0, row=0, sticky="NSEW")
@@ -197,7 +197,13 @@ class ContextMenu:
 
     @cleanup
     def open_folder(self):
+        """open folder containing snips"""
         os.popen(f'explorer "{os.path.abspath(self.shot.path)}"')
+
+    @cleanup
+    def edit(self):
+        """open current snip with paint"""
+        os.popen(f'C:\Windows\System32\mspaint.exe {os.path.abspath("/".join([self.shot.path, self.shot.filename]))}')
 
     def save_input(self):
         """
@@ -222,7 +228,6 @@ class ContextMenu:
         # focus on entry text field
         txt_field.focus()
 
-
     def show(self):
         self.root.mainloop()
 
@@ -233,6 +238,7 @@ class ContextMenu:
 
 class HoverButton(tkinter.Button):
     """Button class with changing colors on hover"""
+
     def __init__(self, master, **kw):
         tkinter.Button.__init__(self, master=master, **kw)
         self.defaultBackground = self["background"]
