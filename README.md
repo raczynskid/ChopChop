@@ -47,7 +47,7 @@ with your snip in the body (requires email client, eg. Outlook)
 
 - pick "edit" to open the current snip in MS paint to edit and copy/save
 
-- to create a delayed snip, choose the "delay" option 
+- to create a delayed snip, choose the "delay" option and pick delay in seconds using the slider
 
 Installing ChopChop in 3 steps:
 -
