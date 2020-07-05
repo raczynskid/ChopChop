@@ -61,6 +61,14 @@ Installing ChopChop in 3 steps:
 example:
 ![shortcut](Examples/shortcut.png)
 
+<br>
+
+Pyinstaller .exe package is also available in the "build" folder, however it's been known to cause issues
+with Windows security and/or antivirus software. For most cases, it's preferable to run ChopChop from .py files as
+described above.
+
+<br>
+
 Contributing to ChopChop
 -
 If you want to help improve ChopChop, feel free to fork this repository or log an issue/enhancement.
