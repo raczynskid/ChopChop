@@ -14,11 +14,11 @@ this will be indicated by cursor changing to crosshair
 - You choose what you want to do with your
 snip by using the contextual menu that appears after you select the area
 - If you press ESC at any stage, ChopChop is gone and out of your way
-- Default saving behavior is to just give the name of the file (it will be saved at a default location) - if you're taking
-a bunch of screenshots in quick succession, no need to go through the browse window every time.
+- Default saving behavior is to just give the name of the file (it will be saved at a default location) - if you're 
+taking a bunch of screenshots in quick succession, no need to go through the browse window every time.
 - Pop open the default folder at any time - just right click anywhere in 
 snipping mode or with context menu open to see all your saved snips
-- If you want to edit your snip, just choose Edit option from the contxt menu - it will immediately open in MS Paint
+- If you want to edit your snip, just choose Edit option from the context menu - it will immediately open in MS Paint
 
 How to use ChopChop
 -
@@ -26,13 +26,16 @@ copy image to clipboard
 ![Clipboard demo](Examples/clipboard.gif)
  
 save image to file
-
 ![file demo](Examples/to_file.gif)
 
 
 edit image in MS paint
-
 ![edit demo](Examples/edit.gif)
+
+
+create a delayed snip
+![edit demo](Examples/delay.gif)
+
 <br><br>
 
 - to see all your previously saved snips, 
@@ -44,8 +47,7 @@ with your snip in the body (requires email client, eg. Outlook)
 
 - pick "edit" to open the current snip in MS paint to edit and copy/save
 
-- MS Teams integration will be added in the future - currently the "teams" button is greyed out
-
+- to create a delayed snip, choose the "delay" option 
 
 Installing ChopChop in 3 steps:
 -

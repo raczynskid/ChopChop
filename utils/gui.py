@@ -2,6 +2,8 @@ import tkinter
 import copy
 import os
 import time
+import subprocess
+import sys
 from PIL import Image, ImageTk
 from utils.shot import Shot
 from utils.clipboard_handle import ClipboardHandle
@@ -21,7 +23,10 @@ def cleanup(f):
     def wrap(self, *args):
         f(self, *args)
         self.action = True
-        self.root.withdraw()
+        try:
+            self.root.withdraw()
+        except tkinter.TclError:
+            pass
         self.root.quit()
         if isinstance(self.root, tkinter.Toplevel):
             self.root.destroy()
@@ -123,18 +128,19 @@ class App:
     @cleanup
     def show_action_menu(self, coords):
         """display context menu after cropping the screenshot"""
-        cw = ContextMenu(coords, self.shot)
+        cw = ContextMenu(coords, self)
         cw.show()
 
 
 class ContextMenu:
     """display context menu for currently selected screenshot"""
 
-    def __init__(self, coords, shot):
+    def __init__(self, coords, parent):
         self.x, self.y = coords
         self.root = self.configure_root()
         self.add_buttons()
-        self.shot = shot
+        self.parent = parent
+        self.shot = parent.shot
         self.action = False
 
     def configure_root(self):
@@ -145,9 +151,9 @@ class ContextMenu:
 
         # offset menu location to NW if too close to SE border
         screen_offset_x, screen_offset_y = 10, 10
-        if abs(root.winfo_screenwidth() - self.x) < 100:
+        if abs(root.winfo_screenwidth() - self.x) < 150:
             screen_offset_x = -100
-        if abs(root.winfo_screenheight() - self.y) < 100:
+        if abs(root.winfo_screenheight() - self.y) < 150:
             screen_offset_y = -300
         root.geometry(f"+{int(self.x) + screen_offset_x}+{int(self.y) + screen_offset_y}")
         root.columnconfigure(0, weight=1)
@@ -245,7 +251,7 @@ class ContextMenu:
         frame = tkinter.Frame(self.root)
         # inside the frame:
         # create a slider
-        slider = tkinter.Scale(frame, command=self.set_delay_value_from_slider, from_=1, to=10,
+        slider = tkinter.Scale(frame, command=self.set_delay_value_from_slider, from_=0, to=10,
                                orient=tkinter.HORIZONTAL)
         # grid the objects into the frame
         slider.grid(column=0, row=1, columnspan=2, sticky="W")
@@ -257,12 +263,14 @@ class ContextMenu:
         """update propert with current delay slider value"""
         self.delay_value = int(delay_val)
 
-    @cleanup
     def delay_slider_release(self, *args):
-        """return delay slider value on release"""
-        # todo; only print now - future need to restart the capture process after delay
-        print(self.delay_value)
-
+        """on release send shell command to restart in n seconds passed from delay_value instance attribute"""
+        # destroy parent
+        self.parent.root.destroy()
+        # construct shell command
+        s = f"ping -n {self.delay_value} 127.0.0.1 && {sys.executable} " + str(sys.argv[0]).replace('/', '\\')
+        # call shell command and capture output to null
+        subprocess.call(s, shell=True, stdout=open(os.devnull, 'wb'), stderr=subprocess.STDOUT)
 
     def show(self):
         """show context menu"""
