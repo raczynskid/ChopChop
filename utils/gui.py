@@ -1,11 +1,20 @@
 import tkinter
 import copy
 import os
+import time
+import subprocess
+import sys
 from PIL import Image, ImageTk
 from utils.shot import Shot
 from utils.clipboard_handle import ClipboardHandle
 from utils.mail_handle import MailHandler
 from tkinter import filedialog
+
+
+def restart(delay):
+    time.sleep(delay)
+    app = App()
+    app.crop_shot()
 
 
 def cleanup(f):
@@ -14,7 +23,10 @@ def cleanup(f):
     def wrap(self, *args):
         f(self, *args)
         self.action = True
-        self.root.withdraw()
+        try:
+            self.root.withdraw()
+        except tkinter.TclError:
+            pass
         self.root.quit()
         if isinstance(self.root, tkinter.Toplevel):
             self.root.destroy()
@@ -116,18 +128,19 @@ class App:
     @cleanup
     def show_action_menu(self, coords):
         """display context menu after cropping the screenshot"""
-        cw = ContextMenu(coords, self.shot)
+        cw = ContextMenu(coords, self)
         cw.show()
 
 
 class ContextMenu:
     """display context menu for currently selected screenshot"""
 
-    def __init__(self, coords, shot):
+    def __init__(self, coords, parent):
         self.x, self.y = coords
         self.root = self.configure_root()
         self.add_buttons()
-        self.shot = shot
+        self.parent = parent
+        self.shot = parent.shot
         self.action = False
 
     def configure_root(self):
@@ -138,9 +151,9 @@ class ContextMenu:
 
         # offset menu location to NW if too close to SE border
         screen_offset_x, screen_offset_y = 10, 10
-        if abs(root.winfo_screenwidth() - self.x) < 100:
+        if abs(root.winfo_screenwidth() - self.x) < 200:
             screen_offset_x = -100
-        if abs(root.winfo_screenheight() - self.y) < 100:
+        if abs(root.winfo_screenheight() - self.y) < 200:
             screen_offset_y = -300
         root.geometry(f"+{int(self.x) + screen_offset_x}+{int(self.y) + screen_offset_y}")
         root.columnconfigure(0, weight=1)
@@ -154,7 +167,7 @@ class ContextMenu:
         # create and configure context menu buttons
         clipboard = HoverButton(self.root, text="clipboard", command=self.to_clipboard)
         mail = HoverButton(self.root, text="email", command=self.send_mail)
-        teams = HoverButton(self.root, text="teams", command=lambda: print("teams pressed"), state=tkinter.DISABLED)
+        delay = HoverButton(self.root, text="delay", command=self.set_delay)
         upload = HoverButton(self.root, text="upload", command=lambda: print("upload pressed"), state=tkinter.DISABLED)
         save = HoverButton(self.root, text="save", command=self.save_input)
         folder = HoverButton(self.root, text="edit", command=self.edit)
@@ -163,7 +176,7 @@ class ContextMenu:
         clipboard.grid(column=0, row=0, sticky="NSEW")
         save.grid(column=0, row=1, sticky="NSEW")
         mail.grid(column=0, row=3, sticky="NSEW")
-        teams.grid(column=0, row=4, sticky="NSEW")
+        delay.grid(column=0, row=4, sticky="NSEW")
         upload.grid(column=0, row=5, sticky="NSEW")
         folder.grid(column=0, row=6, sticky="NSEW")
 
@@ -230,10 +243,41 @@ class ContextMenu:
         # focus on entry text field
         txt_field.focus()
 
+    def set_delay(self):
+        """
+        show delay slider when delay context button is pressed
+        """
+        # create a frame
+        frame = tkinter.Frame(self.root)
+        # inside the frame:
+        # create a slider
+        slider = tkinter.Scale(frame, command=self.set_delay_value_from_slider, from_=0, to=10,
+                               orient=tkinter.HORIZONTAL)
+        # grid the objects into the frame
+        slider.grid(column=0, row=1, columnspan=2, sticky="W")
+        # replace delay buton in context with the slider
+        frame.grid(column=0, row=4)
+        slider.bind("<ButtonRelease-1>", self.delay_slider_release)
+
+    def set_delay_value_from_slider(self, delay_val):
+        """update propert with current delay slider value"""
+        self.delay_value = int(delay_val)
+
+    def delay_slider_release(self, *args):
+        """on release send shell command to restart in n seconds passed from delay_value instance attribute"""
+        # destroy parent
+        self.parent.root.destroy()
+        # construct shell command
+        s = f"ping -n {self.delay_value} 127.0.0.1 && {sys.executable} " + str(sys.argv[0]).replace('/', '\\')
+        # call shell command and capture output to null
+        subprocess.call(s, shell=True, stdout=open(os.devnull, 'wb'), stderr=subprocess.STDOUT)
+
     def show(self):
+        """show context menu"""
         self.root.mainloop()
 
     def clear(self):
+        """clear context menu"""
         self.root.quit()
         self.root.destroy()
 
