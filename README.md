@@ -19,6 +19,7 @@ taking a bunch of screenshots in quick succession, no need to go through the bro
 - Pop open the default folder at any time - just right click anywhere in 
 snipping mode or with context menu open to see all your saved snips
 - If you want to edit your snip, just choose Edit option from the context menu - it will immediately open in MS Paint
+- ChopChop has been developed and tested in Windows 10 environment only - Mac support will be added in the future
 
 How to use ChopChop
 -
