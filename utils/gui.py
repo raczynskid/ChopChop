@@ -5,9 +5,9 @@ import time
 import subprocess
 import sys
 from PIL import Image, ImageTk
-from utils.shot import Shot
-from utils.clipboard_handle import ClipboardHandle
-from utils.mail_handle import MailHandler
+from utils.screenshot_handler import ScreenShot
+from utils.clipboard_handler import ClipboardHandle
+from utils.mail_handler import MailHandler
 from tkinter import filedialog
 
 
@@ -36,8 +36,8 @@ def cleanup(f):
 
 class App:
     """
-    on creation instantiate new Shot object
-    create fullscreen canvas with Shot as background
+    on creation instantiate new ScreenShot object
+    create fullscreen canvas with ScreenShot as background
     on left click start drawing selection
     on release create toplevel menu with options
     after option is selected destroy window
@@ -85,7 +85,7 @@ class App:
 
     def crop_shot(self):
         """display pillow image in root"""
-        self.original_shot = Shot()
+        self.original_shot = ScreenShot()
         self.shot = copy.deepcopy(self.original_shot)
         image = ImageTk.PhotoImage(self.shot.img)
         self.canvas.create_image(self.w / 2, self.h / 2, image=image)
