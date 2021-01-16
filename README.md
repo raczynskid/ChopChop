@@ -50,9 +50,8 @@ with your snip in the body (requires email client, eg. Outlook)
 
 - to create a delayed snip, choose the "delay" option and pick delay in seconds using the slider
 
-To run ChopChop, use dist/ChopChop.exe file.
-
-In case you don't want to use the .exe file, you can set up ChopChop in 3 steps:
+-
+To run ChopChop, use dist/ChopChop.exe file OR you can set up ChopChop in 3 steps:
 -
 - clone this repository<br> 
 ```git clone https://github.com/raczynskid/ChopChop.git```<br>
@@ -64,7 +63,6 @@ example:
 ![shortcut](Examples/shortcut.png)
 
 <br>
-
 Contributing to ChopChop
 -
 If you want to help improve ChopChop, feel free to fork this repository or log an issue/enhancement.
