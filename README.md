@@ -50,23 +50,18 @@ with your snip in the body (requires email client, eg. Outlook)
 
 - to create a delayed snip, choose the "delay" option and pick delay in seconds using the slider
 
-Installing ChopChop in 3 steps:
+To run ChopChop, use dist/ChopChop.exe file.
+
+In case you don't want to use the .exe file, you can set up ChopChop in 3 steps:
 -
-(make sure you have Python3 and git installed)
-- clone this repository to your computer with <br> 
+- clone this repository<br> 
 ```git clone https://github.com/raczynskid/ChopChop.git```<br>
-- install the requirements with <br> 
-```pip install requirements txt```<br>
+- install the requirements with (preferably to a new virtual environment)<br> 
+```pip install -r requirements txt```<br>
 - create a shortcut where target is <br>
-```[path to your pythonw (the "w" means no console window)][space][path to __main__.py]```
+```[path to your pythonw (the "w" means no console window)] [path to __main__.py]```
 example:
 ![shortcut](Examples/shortcut.png)
-
-<br>
-
-Pyinstaller .exe package is also available in the "build" folder, however it's been known to cause issues
-with Windows security and/or antivirus software. For most cases, it's preferable to run ChopChop from .py files as
-described above.
 
 <br>
 
