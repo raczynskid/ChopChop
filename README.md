@@ -3,6 +3,11 @@
 ChopChop was created as an alternative for bulkier screenshot tools such as
 windows default snipping tool or Screenpresso.
 
+# [Download](https://github.com/raczynskid/ChopChop/archive/master.zip "Download ChopChop")
+
+Run ChopChop by running dist/ChopChop.exe
+On first run Windows may show a warning - just click "more info" and "run anyway"
+
 The goal is to be as quick, lightweight and minimalistic as possible - to accomplish
 the same things with fewest mouse clicks possible.
 
@@ -50,8 +55,7 @@ with your snip in the body (requires email client, eg. Outlook)
 
 - to create a delayed snip, choose the "delay" option and pick delay in seconds using the slider
 
--
-To run ChopChop, use dist/ChopChop.exe file OR you can set up ChopChop in 3 steps:
+If you don't want to use the .exe file can set up ChopChop in 3 quick steps:
 -
 - clone this repository<br> 
 ```git clone https://github.com/raczynskid/ChopChop.git```<br>
