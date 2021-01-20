@@ -6,7 +6,8 @@ windows default snipping tool or Screenpresso.
 # [Download](https://github.com/raczynskid/ChopChop/archive/master.zip "Download ChopChop")
 
 Run ChopChop by running dist/ChopChop.exe
-On first run Windows may show a warning - just click "more info" and "run anyway"
+
+__On first run Windows may show a warning - just click "more info" and "run anyway"__
 
 The goal is to be as quick, lightweight and minimalistic as possible - to accomplish
 the same things with fewest mouse clicks possible.
